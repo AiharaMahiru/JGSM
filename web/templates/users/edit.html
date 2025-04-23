@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}编辑用户信息 - 学生管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-user-edit"></i> 编辑用户信息</h5>
+        <div>
+            <a href="{{ url_for('user.view', username=user.username) }}" class="btn btn-light btn-sm">
+                <i class="fas fa-eye"></i> 查看详情
+            </a>
+            <a href="{{ url_for('user.list') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left"></i> 返回列表
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('user.edit', username=user.username) }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" value="{{ user.username }}" disabled>
+                        <div class="form-text">用户名不可修改</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">角色 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="role" name="role" required {% if user.username == session.user.username %}disabled{% endif %}>
+                            <option value="">请选择角色</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>管理员</option>
+                            <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>教师</option>
+                            <option value="student" {% if user.role == 'student' %}selected{% endif %}>学生</option>
+                        </select>
+                        {% if user.username == session.user.username %}
+                        <div class="form-text">不能修改自己的角色</div>
+                        <input type="hidden" name="role" value="{{ user.role }}">
+                        {% endif %}
+                    </div>
+                    <div class="mb-3" id="student_id_group" {% if user.role != 'student' %}style="display: none;"{% endif %}>
+                        <label for="student_id" class="form-label">关联学号</label>
+                        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ user.student_id }}">
+                        <div class="form-text">如果角色为学生，请输入关联的学号</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="real_name" class="form-label">真实姓名</label>
+                        <input type="text" class="form-control" id="real_name" name="real_name" value="{{ user.real_name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">电子邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">联系电话</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{{ url_for('user.view', username=user.username) }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 取消
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存修改
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // 当角色选择变化时，显示或隐藏学号输入框
+    document.getElementById('role').addEventListener('change', function() {
+        const studentIdGroup = document.getElementById('student_id_group');
+        if (this.value === 'student') {
+            studentIdGroup.style.display = 'block';
+        } else {
+            studentIdGroup.style.display = 'none';
+            document.getElementById('student_id').value = '';
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}编辑成绩 - 学生管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-edit"></i> 编辑成绩</h5>
+        <a href="{{ url_for('grade.list') }}" class="btn btn-light btn-sm">
+            <i class="fas fa-arrow-left"></i> 返回列表
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5 class="border-bottom pb-2 mb-3">学生信息</h5>
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width: 100px;">学号:</th>
+                        <td>{{ grade.student_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>姓名:</th>
+                        <td>{{ grade.student_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>班级:</th>
+                        <td>{{ grade.class_name }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5 class="border-bottom pb-2 mb-3">课程信息</h5>
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width: 100px;">课程编号:</th>
+                        <td>{{ grade.course_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>课程名称:</th>
+                        <td>{{ grade.course_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>学期:</th>
+                        <td>{{ grade.semester }}</td>
+                    </tr>
+                    <tr>
+                        <th>学分:</th>
+                        <td>{{ grade.credit }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <form method="post" action="{{ url_for('grade.edit', grade_id=grade.id) }}">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="mb-3">
+                        <label for="score" class="form-label">成绩 <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="score" name="score" min="0" max="100" step="0.1" value="{{ grade.score }}" required>
+                        <div class="form-text">请输入0-100之间的分数</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">当前绩点</label>
+                        <input type="text" class="form-control" value="{{ grade.grade_point }}" disabled>
+                        <div class="form-text">绩点将根据成绩自动计算</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-3">
+                <a href="{{ url_for('grade.list') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 取消
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存修改
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

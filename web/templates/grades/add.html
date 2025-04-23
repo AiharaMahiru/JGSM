@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}添加成绩 - 学生管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-plus"></i> 添加成绩</h5>
+        <a href="{{ url_for('grade.list') }}" class="btn btn-light btn-sm">
+            <i class="fas fa-arrow-left"></i> 返回列表
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('grade.add') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label">学生 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="student_id" name="student_id" required>
+                            <option value="">请选择学生</option>
+                            {% for student in students %}
+                            <option value="{{ student.student_id }}" {% if request.args.get('student_id') == student.student_id %}selected{% endif %}>
+                                {{ student.student_id }} - {{ student.name }} ({{ student.class_name }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">课程 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="course_id" name="course_id" required>
+                            <option value="">请选择课程</option>
+                            {% for course in courses %}
+                            <option value="{{ course.course_id }}" {% if request.args.get('course_id') == course.course_id %}selected{% endif %}>
+                                {{ course.course_id }} - {{ course.name }} ({{ course.semester }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="score" class="form-label">成绩 <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="score" name="score" min="0" max="100" step="0.1" required>
+                        <div class="form-text">请输入0-100之间的分数</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="semester" class="form-label">学期 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="semester" name="semester" required>
+                        <div class="form-text">例如：2025-2026学年第一学期</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> 重置
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // 当选择课程时，自动填充学期
+    document.getElementById('course_id').addEventListener('change', function() {
+        const courseSelect = this;
+        const semesterInput = document.getElementById('semester');
+        
+        if (courseSelect.selectedIndex > 0) {
+            const courseOption = courseSelect.options[courseSelect.selectedIndex];
+            const courseName = courseOption.text;
+            // 从课程名称中提取学期信息（括号中的内容）
+            const match = courseName.match(/\((.*?)\)/);
+            if (match && match[1]) {
+                semesterInput.value = match[1];
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

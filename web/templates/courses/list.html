@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}课程列表 - 学生管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-book"></i> 课程列表</h5>
+        <div>
+            {% if session.user.role in ['admin', 'teacher'] %}
+            <a href="{{ url_for('course.add') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-plus"></i> 添加课程
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- 搜索和筛选 -->
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <form method="get" action="{{ url_for('course.list') }}" class="row g-2">
+                    <div class="col-md-4">
+                        <select name="semester" class="form-select">
+                            <option value="">所有学期</option>
+                            {% for semester in semester_list %}
+                            <option value="{{ semester }}" {% if filters.semester == semester %}selected{% endif %}>{{ semester }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter"></i> 筛选
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <form method="get" action="{{ url_for('course.list') }}" class="d-flex">
+                    <input type="text" name="keyword" class="form-control" placeholder="搜索课程编号/名称/教师" value="{{ filters.keyword }}">
+                    <button type="submit" class="btn btn-primary ms-2">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 课程列表 -->
+        {% if courses %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>学期</th>
+                        <th>学分</th>
+                        <th>授课教师</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.course_id }}</td>
+                        <td>{{ course.course_name }}</td>
+                        <td>{{ course.semester }}</td>
+                        <td>{{ course.credit }}</td>
+                        <td>{{ course.teacher }}</td>
+                        <td>
+                            <a href="{{ url_for('course.view', course_id=course.course_id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if session.user.role in ['admin', 'teacher'] %}
+                            <a href="{{ url_for('course.edit', course_id=course.course_id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if session.user.role == 'admin' %}
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ course.course_id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <!-- 删除确认对话框 -->
+                            <div class="modal fade" id="deleteModal{{ course.course_id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">确认删除</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            确定要删除课程 <strong>{{ course.course_name }}</strong> ({{ course.course_id }}) 吗？此操作不可恢复！
+                                            <div class="alert alert-warning mt-2">
+                                                <i class="fas fa-exclamation-triangle"></i> 警告：删除课程将同时删除与该课程相关的所有成绩记录！
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <form action="{{ url_for('course.delete', course_id=course.course_id) }}" method="post" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger">确认删除</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        {% if pagination.total_pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('course.list', page=pagination.page-1, semester=filters.semester, keyword=filters.keyword) }}">上一页</a>
+                </li>
+                {% for p in range(1, pagination.total_pages + 1) %}
+                <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('course.list', page=p, semester=filters.semester, keyword=filters.keyword) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                <li class="page-item {% if pagination.page == pagination.total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('course.list', page=pagination.page+1, semester=filters.semester, keyword=filters.keyword) }}">下一页</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> 没有找到课程记录
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

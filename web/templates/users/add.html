@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}添加用户 - 学生管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-user-plus"></i> 添加用户</h5>
+        <a href="{{ url_for('user.list') }}" class="btn btn-light btn-sm">
+            <i class="fas fa-arrow-left"></i> 返回列表
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('user.add') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                        <div class="form-text">用户名只能包含字母、数字和下划线</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码 <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">密码长度至少为6位</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">确认密码 <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">角色 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="role" name="role" required>
+                            <option value="">请选择角色</option>
+                            <option value="admin">管理员</option>
+                            <option value="teacher">教师</option>
+                            <option value="student">学生</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="real_name" class="form-label">真实姓名</label>
+                        <input type="text" class="form-control" id="real_name" name="real_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">电子邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">联系电话</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                    <div class="mb-3" id="student_id_group" style="display: none;">
+                        <label for="student_id" class="form-label">关联学号</label>
+                        <input type="text" class="form-control" id="student_id" name="student_id">
+                        <div class="form-text">如果角色为学生，请输入关联的学号</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> 重置
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // 当角色选择变化时，显示或隐藏学号输入框
+    document.getElementById('role').addEventListener('change', function() {
+        const studentIdGroup = document.getElementById('student_id_group');
+        if (this.value === 'student') {
+            studentIdGroup.style.display = 'block';
+        } else {
+            studentIdGroup.style.display = 'none';
+            document.getElementById('student_id').value = '';
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}仪表板 - 学生管理系统{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .chart-container {
+        height: 300px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4 class="card-title">欢迎使用学生管理系统</h4>
+                <p class="card-text">当前登录用户：{{ session.user.real_name or session.user.username }} ({{ session.user.role_name }})</p>
+                <p class="card-text">最后登录时间：{{ session.user.last_login or '首次登录' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white stat-card">
+            <div class="card-body text-center">
+                <h3>{{ stats.student_count }}</h3>
+                <p class="mb-0">学生总数</p>
+            </div>
+            <div class="card-footer d-grid">
+                <a href="{{ url_for('student.list') }}" class="btn btn-sm btn-light">查看详情</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white stat-card">
+            <div class="card-body text-center">
+                <h3>{{ stats.course_count }}</h3>
+                <p class="mb-0">课程总数</p>
+            </div>
+            <div class="card-footer d-grid">
+                <a href="{{ url_for('course.list') }}" class="btn btn-sm btn-light">查看详情</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white stat-card">
+            <div class="card-body text-center">
+                <h3>{{ stats.grade_count }}</h3>
+                <p class="mb-0">成绩记录数</p>
+            </div>
+            <div class="card-footer d-grid">
+                <a href="{{ url_for('grade.list') }}" class="btn btn-sm btn-light">查看详情</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white stat-card">
+            <div class="card-body text-center">
+                <h3>{{ stats.user_count }}</h3>
+                <p class="mb-0">系统用户数</p>
+            </div>
+            <div class="card-footer d-grid">
+                <a href="{{ url_for('user.list') }}" class="btn btn-sm btn-light">查看详情</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 图表和数据 -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">班级学生分布</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" id="classDistributionChart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">成绩等级分布</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" id="gradeDistributionChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">最近添加的学生</h5>
+                <a href="{{ url_for('student.list') }}" class="btn btn-sm btn-primary">查看全部</a>
+            </div>
+            <div class="card-body">
+                {% if recent_students %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>学号</th>
+                                <th>姓名</th>
+                                <th>班级</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in recent_students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.class_name }}</td>
+                                <td>
+                                    <a href="{{ url_for('student.view', student_id=student.student_id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 暂无学生记录
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">最近添加的课程</h5>
+                <a href="{{ url_for('course.list') }}" class="btn btn-sm btn-primary">查看全部</a>
+            </div>
+            <div class="card-body">
+                {% if recent_courses %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>课程编号</th>
+                                <th>课程名称</th>
+                                <th>学期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in recent_courses %}
+                            <tr>
+                                <td>{{ course.course_id }}</td>
+                                <td>{{ course.name }}</td>
+                                <td>{{ course.semester }}</td>
+                                <td>
+                                    <a href="{{ url_for('course.view', course_id=course.course_id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 暂无课程记录
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 班级学生分布图
+        const classCtx = document.getElementById('classDistributionChart').getContext('2d');
+        const classChart = new Chart(classCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ class_distribution.labels|tojson }},
+                datasets: [{
+                    label: '学生人数',
+                    data: {{ class_distribution.data|tojson }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // 成绩等级分布图
+        const gradeCtx = document.getElementById('gradeDistributionChart').getContext('2d');
+        const gradeChart = new Chart(gradeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['优秀', '良好', '中等', '及格', '不及格'],
+                datasets: [{
+                    data: {{ grade_distribution|tojson }},
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(255, 205, 86, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgb(54, 162, 235)',
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 205, 86)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 99, 132)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+{% endblock %}

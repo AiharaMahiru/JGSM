@@ -1,0 +1,137 @@
+2025-04-23 14:41:55,585 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 14:41:55,586 - __main__ - INFO - 学生管理系统启动
+2025-04-23 14:41:55,586 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 14:41:55,587 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 14:41:55,588 - __main__ - INFO - 数据库初始化完成
+2025-04-23 14:41:55,588 - __main__ - ERROR - 系统运行出错: Database.__init__() missing 1 required positional argument: 'config'
+Traceback (most recent call last):
+  File "D:\VSC\python\jg\main.py", line 110, in main
+    controllers = init_controllers(db)
+  File "D:\VSC\python\jg\main.py", line 57, in init_controllers
+    'student': StudentController(db),
+               ~~~~~~~~~~~~~~~~~^^^^
+  File "D:\VSC\python\jg\controllers\student_controller.py", line 18, in __init__
+    super().__init__(current_user)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "D:\VSC\python\jg\controllers\base_controller.py", line 24, in __init__
+    self.db = Database()
+              ~~~~~~~~^^
+TypeError: Database.__init__() missing 1 required positional argument: 'config'
+2025-04-23 14:47:18,882 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 14:47:18,883 - __main__ - INFO - 学生管理系统启动
+2025-04-23 14:47:18,884 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 14:47:18,885 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 14:47:18,885 - __main__ - INFO - 数据库初始化完成
+2025-04-23 14:47:18,885 - __main__ - INFO - 控制器初始化完成
+2025-04-23 14:47:18,885 - __main__ - INFO - 视图初始化完成
+2025-04-23 14:47:45,358 - models.user - WARNING - 认证失败: 用户 admin 密码错误
+2025-04-23 14:51:04,292 - models.user - WARNING - 认证失败: 用户 admin 密码错误
+2025-04-23 14:51:13,502 - models.user - WARNING - 认证失败: 用户 admin 密码错误
+2025-04-23 14:51:20,704 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 14:51:23,822 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 14:51:23,823 - __main__ - INFO - 学生管理系统启动
+2025-04-23 14:51:23,824 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 14:51:23,825 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 14:51:23,825 - __main__ - INFO - 数据库初始化完成
+2025-04-23 14:51:23,825 - __main__ - INFO - 控制器初始化完成
+2025-04-23 14:51:23,825 - __main__ - INFO - 视图初始化完成
+2025-04-23 14:55:18,458 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 14:55:18,458 - __main__ - INFO - 学生管理系统启动
+2025-04-23 14:55:18,459 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 14:55:18,460 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 14:55:18,461 - __main__ - INFO - 数据库初始化完成
+2025-04-23 14:55:18,461 - __main__ - INFO - 控制器初始化完成
+2025-04-23 14:55:18,461 - __main__ - INFO - 视图初始化完成
+2025-04-23 14:55:25,862 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 14:55:29,774 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:55:58,102 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:56:08,296 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:56:16,939 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:56:37,514 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:56:54,132 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 14:56:59,815 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 14:56:59,816 - __main__ - INFO - 学生管理系统启动
+2025-04-23 14:56:59,817 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 14:56:59,818 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 14:56:59,818 - __main__ - INFO - 数据库初始化完成
+2025-04-23 14:56:59,818 - __main__ - INFO - 控制器初始化完成
+2025-04-23 14:56:59,818 - __main__ - INFO - 视图初始化完成
+2025-04-23 14:57:04,574 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 14:57:08,347 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:57:19,721 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 14:57:24,948 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 15:02:33,602 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 15:02:33,602 - __main__ - INFO - 学生管理系统启动
+2025-04-23 15:02:33,603 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 15:02:33,604 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 15:02:33,605 - __main__ - INFO - 数据库初始化完成
+2025-04-23 15:02:33,605 - __main__ - INFO - 控制器初始化完成
+2025-04-23 15:02:33,605 - __main__ - INFO - 视图初始化完成
+2025-04-23 15:02:38,965 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 15:02:41,085 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:02:51,245 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 15:05:38,688 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 15:05:38,689 - __main__ - INFO - 学生管理系统启动
+2025-04-23 15:05:38,689 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 15:05:38,691 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 15:05:38,691 - __main__ - INFO - 数据库初始化完成
+2025-04-23 15:05:38,691 - __main__ - INFO - 控制器初始化完成
+2025-04-23 15:05:38,691 - __main__ - INFO - 视图初始化完成
+2025-04-23 15:05:43,839 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 15:05:46,357 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:05:55,324 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:06:15,662 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:06:22,275 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 15:08:23,876 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 15:08:23,876 - __main__ - INFO - 学生管理系统启动
+2025-04-23 15:08:23,877 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 15:08:23,879 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 15:08:23,879 - __main__ - INFO - 数据库初始化完成
+2025-04-23 15:08:23,879 - __main__ - INFO - 控制器初始化完成
+2025-04-23 15:08:23,879 - __main__ - INFO - 视图初始化完成
+2025-04-23 15:08:29,268 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 15:08:31,239 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:08:44,468 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:08:52,536 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 15:16:12,817 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 15:16:12,817 - __main__ - INFO - 学生管理系统启动
+2025-04-23 15:16:12,818 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 15:16:12,819 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 15:16:12,819 - __main__ - INFO - 数据库初始化完成
+2025-04-23 15:16:12,819 - __main__ - INFO - 控制器初始化完成
+2025-04-23 15:16:12,819 - __main__ - INFO - 视图初始化完成
+2025-04-23 15:16:17,279 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 15:16:19,171 - controllers.base_controller - WARNING - 权限检查失败: 未登录用户
+2025-04-23 15:19:29,304 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 15:19:33,571 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 15:19:33,571 - __main__ - INFO - 学生管理系统启动
+2025-04-23 15:19:33,572 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 15:19:33,573 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 15:19:33,573 - __main__ - INFO - 数据库初始化完成
+2025-04-23 15:19:33,573 - __main__ - INFO - 控制器初始化完成
+2025-04-23 15:19:33,573 - __main__ - INFO - 视图初始化完成
+2025-04-23 15:19:37,580 - models.user - INFO - 用户 admin 认证成功
+2025-04-23 15:22:26,677 - models.student - INFO - 成功添加学生: 大师兄(20022222)
+2025-04-23 15:23:02,212 - models.course - INFO - 成功添加课程: 1212(1212)
+2025-04-23 15:23:17,213 - __main__ - INFO - 学生管理系统正常退出
+2025-04-23 16:35:57,603 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 16:35:57,603 - __main__ - INFO - 学生管理系统启动
+2025-04-23 16:35:57,604 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 16:35:57,654 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 16:35:57,654 - __main__ - INFO - 数据库初始化完成
+2025-04-23 16:35:57,654 - __main__ - INFO - 控制器初始化完成
+2025-04-23 16:35:57,654 - __main__ - INFO - 视图初始化完成
+2025-04-23 16:46:23,316 - __main__ - INFO - 日志系统初始化完成
+2025-04-23 16:46:23,317 - __main__ - INFO - 学生管理系统启动
+2025-04-23 16:46:23,318 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-23 16:46:23,321 - models.database - INFO - 数据库表结构初始化完成
+2025-04-23 16:46:23,321 - __main__ - INFO - 数据库初始化完成
+2025-04-23 16:46:23,322 - __main__ - INFO - 控制器初始化完成
+2025-04-23 16:46:23,323 - __main__ - INFO - 视图初始化完成
+2025-04-24 02:31:16,335 - __main__ - INFO - 日志系统初始化完成
+2025-04-24 02:31:16,335 - __main__ - INFO - 学生管理系统启动
+2025-04-24 02:31:16,336 - models.database - INFO - 成功连接到数据库: D:\VSC\python\jg\data\student_management.db
+2025-04-24 02:31:16,386 - models.database - INFO - 数据库表结构初始化完成
+2025-04-24 02:31:16,386 - __main__ - INFO - 数据库初始化完成
+2025-04-24 02:31:16,386 - __main__ - INFO - 控制器初始化完成
+2025-04-24 02:31:16,386 - __main__ - INFO - 视图初始化完成
