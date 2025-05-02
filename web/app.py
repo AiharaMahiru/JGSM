@@ -19,6 +19,7 @@ from controllers.course_controller import CourseController
 from controllers.grade_controller import GradeController
 from controllers.user_controller import UserController
 from controllers.log_controller import LogController
+from controllers.schedule_controller import ScheduleController
 
 # 导入数据库
 from models.database import Database
@@ -29,6 +30,8 @@ from web.views.student_view import student_bp
 from web.views.course_view import course_bp
 from web.views.grade_view import grade_bp
 from web.views.user_view import user_bp
+from web.views.schedule_view import schedule_bp
+from web.views.api_view import api_bp
 
 def create_app():
     """创建Flask应用实例"""
@@ -63,6 +66,8 @@ def create_app():
     app.register_blueprint(course_bp, url_prefix='/courses')
     app.register_blueprint(grade_bp, url_prefix='/grades')
     app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(schedule_bp, url_prefix='/schedules')
+    app.register_blueprint(api_bp)
     
     # 请求前处理
     @app.before_request
@@ -78,7 +83,8 @@ def create_app():
             'course': CourseController(g.db, session.get('user')),
             'grade': GradeController(g.db, session.get('user')),
             'user': UserController(g.db, session.get('user')),
-            'log': LogController(g.db, session.get('user'))
+            'log': LogController(g.db, session.get('user')),
+            'schedule': ScheduleController(g.db, session.get('user'))
         }
     
     # 请求后处理
