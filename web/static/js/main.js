@@ -75,49 +75,68 @@ function enhanceTable(table) {
 
 // 初始化图表
 function initCharts() {
-    // 成绩分布图表
-    var gradeDistChart = document.getElementById('gradeDistributionChart');
-    if (gradeDistChart) {
-        var ctx = gradeDistChart.getContext('2d');
-        var chartData = JSON.parse(gradeDistChart.getAttribute('data-chart'));
+    // 为确保DOM已完全加载，使用延迟执行
+    setTimeout(function() {
+        // 检查当前页面是否为统计页面
+        var scoreChart = document.getElementById('scoreDistributionChart');
+        var gradeChart = document.getElementById('gradeDistributionChart');
         
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    label: '学生人数',
-                    data: chartData.data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.5)',
-                        'rgba(255, 159, 64, 0.5)',
-                        'rgba(255, 205, 86, 0.5)',
-                        'rgba(75, 192, 192, 0.5)',
-                        'rgba(54, 162, 235, 0.5)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
+        if (scoreChart || gradeChart) {
+            console.log("检测到统计页面，跳过通用图表初始化");
+            return;
+        }
+        
+        // 处理其他页面上的通用图表
+        var charts = document.querySelectorAll('[data-chart]');
+        if (charts.length > 0) {
+            charts.forEach(function(chartElement) {
+                try {
+                    var ctx = chartElement.getContext('2d');
+                    var chartData = JSON.parse(chartElement.getAttribute('data-chart'));
+                    var chartType = chartElement.getAttribute('data-chart-type') || 'bar';
+                    
+                    new Chart(ctx, {
+                        type: chartType,
+                        data: {
+                            labels: chartData.labels,
+                            datasets: [{
+                                label: chartData.label || '数据',
+                                data: chartData.data,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.5)',
+                                    'rgba(255, 159, 64, 0.5)',
+                                    'rgba(255, 205, 86, 0.5)',
+                                    'rgba(75, 192, 192, 0.5)',
+                                    'rgba(54, 162, 235, 0.5)'
+                                ],
+                                borderColor: [
+                                    'rgb(255, 99, 132)',
+                                    'rgb(255, 159, 64)',
+                                    'rgb(255, 205, 86)',
+                                    'rgb(75, 192, 192)',
+                                    'rgb(54, 162, 235)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: chartType === 'bar' || chartType === 'line' ? {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            } : undefined
                         }
-                    }
+                    });
+                } catch (e) {
+                    console.error("初始化图表失败:", e);
                 }
-            }
-        });
-    }
+            });
+        }
+    }, 100); // 添加100ms延迟，确保DOM完全加载
 }
 
 // 确认删除

@@ -677,6 +677,7 @@ class Grade:
             sql = f"""
             SELECT
                 COUNT(*) as total_count,
+                COUNT(DISTINCT g.student_id) as total_students,
                 AVG(score) as avg_score,
                 COUNT(CASE WHEN score >= 60 THEN 1 END) as passed_count
             FROM {TABLES['grades']} g
@@ -712,8 +713,51 @@ class Grade:
             
             if result and result['total_count'] > 0:
                 stats['total_count'] = result['total_count']
+                stats['total_students'] = result['total_students']  # 使用正确的学生计数
                 stats['avg_score'] = round(result['avg_score'], 2)
+                stats['average_score'] = round(result['avg_score'], 2)  # 添加前端使用的键名
                 stats['pass_rate'] = round((result['passed_count'] / result['total_count']) * 100, 2)
+                
+                # 计算不及格率
+                stats['fail_rate'] = round(100 - stats['pass_rate'], 2)
+                
+                # 查询最高分和最低分
+                sql_minmax = f"""
+                SELECT MAX(score) as highest_score, MIN(score) as lowest_score
+                FROM {TABLES['grades']} g
+                LEFT JOIN {TABLES['students']} s ON g.student_id = s.student_id
+                """
+                
+                if where_clauses:
+                    sql_minmax += " WHERE " + " AND ".join(where_clauses)
+                    
+                self.db.execute(sql_minmax, params)
+                minmax_result = self.db.fetchone()
+                
+                if minmax_result:
+                    stats['highest_score'] = minmax_result['highest_score']
+                    stats['lowest_score'] = minmax_result['lowest_score']
+                else:
+                    stats['highest_score'] = 0
+                    stats['lowest_score'] = 0
+                
+                # 计算平均GPA
+                sql_gpa = f"""
+                SELECT AVG(grade_point) as average_gpa
+                FROM {TABLES['grades']} g
+                LEFT JOIN {TABLES['students']} s ON g.student_id = s.student_id
+                """
+                
+                if where_clauses:
+                    sql_gpa += " WHERE " + " AND ".join(where_clauses)
+                    
+                self.db.execute(sql_gpa, params)
+                gpa_result = self.db.fetchone()
+                
+                if gpa_result and gpa_result['average_gpa'] is not None:
+                    stats['average_gpa'] = round(gpa_result['average_gpa'], 2)
+                else:
+                    stats['average_gpa'] = 0
             
             # 分数段分布
             sql = f"""
@@ -739,7 +783,33 @@ class Grade:
             self.db.execute(sql, params)
             distribution_rows = self.db.fetchall()
             
+            # 转换分数段分布到前端期望的格式
+            score_ranges = {
+                'excellent': 0,
+                'good': 0,
+                'medium': 0,
+                'pass': 0,
+                'fail': 0
+            }
+            
+            for row in distribution_rows:
+                if row['score_range'] == '90-100':
+                    score_ranges['excellent'] = row['count']
+                elif row['score_range'] == '80-89':
+                    score_ranges['good'] = row['count']
+                elif row['score_range'] == '70-79':
+                    score_ranges['medium'] = row['count']
+                elif row['score_range'] == '60-69':
+                    score_ranges['pass'] = row['count']
+                elif row['score_range'] == '0-59':
+                    score_ranges['fail'] = row['count']
+            
+            stats['score_ranges'] = score_ranges
             stats['score_distribution'] = {row['score_range']: row['count'] for row in distribution_rows}
+            
+            # 计算优秀率
+            total = stats['total_count'] if stats['total_count'] > 0 else 1
+            stats['excellent_rate'] = round((score_ranges['excellent'] / total) * 100, 2)
             
             # 按学期统计
             sql = f"""
@@ -837,9 +907,17 @@ class Grade:
             return {
                 'error': str(e),
                 'total_count': 0,
+                'total_students': 0,
                 'avg_score': 0,
+                'average_score': 0,
+                'highest_score': 0,
+                'lowest_score': 0,
                 'pass_rate': 0,
+                'fail_rate': 0,
+                'excellent_rate': 0,
+                'average_gpa': 0,
                 'score_distribution': {},
+                'score_ranges': {'excellent': 0, 'good': 0, 'medium': 0, 'pass': 0, 'fail': 0},
                 'semester_stats': {},
                 'course_stats': [],
                 'class_stats': []

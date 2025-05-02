@@ -45,6 +45,12 @@ class Student:
                 logger.error("添加学生失败: 学号和姓名为必填项")
                 return False
             
+            # 先检查学号是否已存在
+            existing_student = self.get_student(student_data['student_id'])
+            if existing_student:
+                logger.error(f"添加学生失败: 学号 {student_data['student_id']} 已存在")
+                return False
+            
             # 准备SQL语句和参数
             fields = ', '.join(student_data.keys())
             placeholders = ', '.join(['?'] * len(student_data))

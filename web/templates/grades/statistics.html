@@ -142,7 +142,9 @@
                         <h5 class="mb-0">成绩分布</h5>
                     </div>
                     <div class="card-body">
-                        <div class="chart-container" id="scoreDistributionChart"></div>
+                        <div class="chart-container">
+                            <canvas id="scoreDistributionChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,7 +154,9 @@
                         <h5 class="mb-0">等级分布</h5>
                     </div>
                     <div class="card-body">
-                        <div class="chart-container" id="gradeDistributionChart"></div>
+                        <div class="chart-container">
+                            <canvas id="gradeDistributionChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,100 +213,162 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js - 使用两个可靠CDN确保加载 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 使用Jinja2的raw标签避免JavaScript语法检查错误
-        {% raw %}
-        // 成绩分布图
-        const scoreCtx = document.getElementById('scoreDistributionChart').getContext('2d');
-        const scoreChart = new Chart(scoreCtx, {
-            type: 'bar',
-            data: {
-                labels: ['0-59分', '60-69分', '70-79分', '80-89分', '90-100分'],
-                datasets: [{
-                    label: '学生人数',
-                    data: [
-        {% endraw %}
-                        {{ statistics.get('score_ranges', {}).get('fail', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('pass', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('medium', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('good', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('excellent', 0) }}
-        {% raw %}
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(255, 205, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(54, 162, 235, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
+<div id="stats-data"
+    data-fail="{{ statistics.get('score_ranges', {}).get('fail', 0) }}"
+    data-pass="{{ statistics.get('score_ranges', {}).get('pass', 0) }}"
+    data-medium="{{ statistics.get('score_ranges', {}).get('medium', 0) }}"
+    data-good="{{ statistics.get('score_ranges', {}).get('good', 0) }}"
+    data-excellent="{{ statistics.get('score_ranges', {}).get('excellent', 0) }}"
+    style="display:none;">
+</div>
+
+<!-- 图表初始化代码 -->
+<script type="text/javascript">
+    // 等待页面完全加载
+    window.addEventListener('load', function() {
+        console.log("页面完全加载，开始初始化统计图表");
+        
+        try {
+            // 从DOM元素中获取统计数据
+            var statsData = document.getElementById('stats-data');
+            if (!statsData) {
+                console.error("找不到统计数据容器");
+                return;
+            }
+            
+            // 解析成绩数据
+            var scoreData = {
+                fail: parseInt(statsData.dataset.fail || 0),
+                pass: parseInt(statsData.dataset.pass || 0),
+                medium: parseInt(statsData.dataset.medium || 0),
+                good: parseInt(statsData.dataset.good || 0),
+                excellent: parseInt(statsData.dataset.excellent || 0)
+            };
+            
+            console.log("统计数据解析成功:", scoreData);
+            
+            // 初始化成绩分布图
+            initScoreChart(scoreData);
+            
+            // 初始化等级分布图
+            initGradeChart(scoreData);
+            
+        } catch (e) {
+            console.error("图表初始化主函数出错:", e);
+        }
+    });
+    
+    // 初始化成绩分布图
+    function initScoreChart(data) {
+        var scoreCanvas = document.getElementById('scoreDistributionChart');
+        if (!scoreCanvas) {
+            console.error("找不到成绩分布图表容器");
+            return;
+        }
+        
+        try {
+            var scoreCtx = scoreCanvas.getContext('2d');
+            var scoreChart = new Chart(scoreCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-59分', '60-69分', '70-79分', '80-89分', '90-100分'],
+                    datasets: [{
+                        label: '学生人数',
+                        data: [
+                            data.fail,
+                            data.pass,
+                            data.medium,
+                            data.good,
+                            data.excellent
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(255, 205, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(54, 162, 235, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(255, 159, 64)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(54, 162, 235)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
                         }
                     }
                 }
-            }
-        });
-
-        // 等级分布图
-        const gradeCtx = document.getElementById('gradeDistributionChart').getContext('2d');
-        const gradeChart = new Chart(gradeCtx, {
-            type: 'pie',
-            data: {
-                labels: ['不及格', '及格', '中等', '良好', '优秀'],
-                datasets: [{
-                    data: [
-        {% endraw %}
-                        {{ statistics.get('score_ranges', {}).get('fail', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('pass', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('medium', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('good', 0) }},
-                        {{ statistics.get('score_ranges', {}).get('excellent', 0) }}
-        {% raw %}
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(255, 205, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(54, 162, 235, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-        {% endraw %}
-    });
+            });
+            console.log("成绩分布图表创建成功");
+        } catch (e) {
+            console.error("成绩分布图表创建失败:", e);
+        }
+    }
+    
+    // 初始化等级分布图
+    function initGradeChart(data) {
+        var gradeCanvas = document.getElementById('gradeDistributionChart');
+        if (!gradeCanvas) {
+            console.error("找不到等级分布图表容器");
+            return;
+        }
+        
+        try {
+            var gradeCtx = gradeCanvas.getContext('2d');
+            var gradeChart = new Chart(gradeCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['不及格', '及格', '中等', '良好', '优秀'],
+                    datasets: [{
+                        data: [
+                            data.fail,
+                            data.pass,
+                            data.medium,
+                            data.good,
+                            data.excellent
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(255, 205, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(54, 162, 235, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(255, 159, 64)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(54, 162, 235)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            console.log("等级分布图表创建成功");
+        } catch (e) {
+            console.error("等级分布图表创建失败:", e);
+        }
+    }
 </script>
 {% endblock %}
